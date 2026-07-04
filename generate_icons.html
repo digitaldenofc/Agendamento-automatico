@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head><title>Icon Generator</title></head>
+<body>
+<h1>Gerador de Ícones PWA</h1>
+<p>Clique no botão para gerar e baixar os ícones.</p>
+<canvas id="canvas" style="display:none"></canvas>
+<div id="output"></div>
+<script>
+const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+
+function generateIcon(size) {
+    const canvas = document.getElementById('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+
+    // Background gradient rose
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#f43f5e');
+    gradient.addColorStop(1, '#e11d48');
+    ctx.fillStyle = gradient;
+
+    // Rounded rectangle
+    const r = size * 0.15;
+    ctx.beginPath();
+    ctx.moveTo(r, 0);
+    ctx.lineTo(size - r, 0);
+    ctx.quadraticCurveTo(size, 0, size, r);
+    ctx.lineTo(size, size - r);
+    ctx.quadraticCurveTo(size, size, size - r, size);
+    ctx.lineTo(r, size);
+    ctx.quadraticCurveTo(0, size, 0, size - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Sparkle/spa icon — simplified hand/nail design
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath();
+    ctx.arc(size * 0.7, size * 0.3, size * 0.25, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Nail polish bottle shape
+    const cx = size / 2;
+    const cy = size / 2;
+    const bw = size * 0.22; // bottle width
+    const bh = size * 0.32; // bottle height
+
+    ctx.fillStyle = '#ffffff';
+    
+    // Cap
+    const capW = bw * 0.5;
+    const capH = bh * 0.2;
+    ctx.fillRect(cx - capW/2, cy - bh/2 - capH - size*0.02, capW, capH);
+    
+    // Handle/brush stick
+    ctx.fillRect(cx - capW*0.15, cy - bh/2 - size*0.02, capW*0.3, bh * 0.15);
+    
+    // Bottle body (rounded)
+    const bodyTop = cy - bh/2 + bh*0.1;
+    const bodyR = bw * 0.15;
+    ctx.beginPath();
+    // Neck (narrower top)
+    const neckW = bw * 0.4;
+    ctx.moveTo(cx - neckW/2, bodyTop);
+    ctx.lineTo(cx + neckW/2, bodyTop);
+    // Widen to body
+    ctx.lineTo(cx + bw/2, bodyTop + bh*0.2);
+    ctx.lineTo(cx + bw/2, cy + bh/2 - bodyR);
+    ctx.quadraticCurveTo(cx + bw/2, cy + bh/2, cx + bw/2 - bodyR, cy + bh/2);
+    ctx.lineTo(cx - bw/2 + bodyR, cy + bh/2);
+    ctx.quadraticCurveTo(cx - bw/2, cy + bh/2, cx - bw/2, cy + bh/2 - bodyR);
+    ctx.lineTo(cx - bw/2, bodyTop + bh*0.2);
+    ctx.closePath();
+    ctx.fill();
+
+    // Sparkle dots
+    ctx.fillStyle = '#ffffff';
+    function drawSparkle(x, y, s) {
+        const armLen = s;
+        ctx.beginPath();
+        ctx.moveTo(x, y - armLen);
+        ctx.lineTo(x + armLen*0.2, y - armLen*0.2);
+        ctx.lineTo(x + armLen, y);
+        ctx.lineTo(x + armLen*0.2, y + armLen*0.2);
+        ctx.lineTo(x, y + armLen);
+        ctx.lineTo(x - armLen*0.2, y + armLen*0.2);
+        ctx.lineTo(x - armLen, y);
+        ctx.lineTo(x - armLen*0.2, y - armLen*0.2);
+        ctx.closePath();
+        ctx.fill();
+    }
+    drawSparkle(size * 0.78, size * 0.22, size * 0.06);
+    drawSparkle(size * 0.25, size * 0.75, size * 0.04);
+    drawSparkle(size * 0.82, size * 0.72, size * 0.035);
+
+    return canvas.toDataURL('image/png');
+}
+
+// Generate all and show download links
+const output = document.getElementById('output');
+const results = {};
+sizes.forEach(s => {
+    const dataUrl = generateIcon(s);
+    results[`icon-${s}x${s}.png`] = dataUrl;
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = `icon-${s}x${s}.png`;
+    a.textContent = `Download icon-${s}x${s}.png`;
+    a.style.display = 'block';
+    a.style.margin = '5px';
+    output.appendChild(a);
+});
+
+// Store results for automation
+window.__iconResults = results;
+document.title = 'ICONS_READY';
+</script>
+</body>
+</html>
